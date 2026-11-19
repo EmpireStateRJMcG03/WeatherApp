@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="WeatherStation2.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:WeatherStation2.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Weather Station">
+
+    <TabBar>
+        <ShellContent Title="Locations" ContentTemplate="{DataTemplate views:HomePage}"     Route="HomePage" />
+        <ShellContent Title="Forecast"  ContentTemplate="{DataTemplate views:ForecastPage}" Route="ForecastPage" />
+        <ShellContent Title="Compare"   ContentTemplate="{DataTemplate views:ComparePage}"  Route="ComparePage" />
+        <ShellContent Title="Planner"   ContentTemplate="{DataTemplate views:PlannerPage}"  Route="PlannerPage" />
+        <ShellContent Title="Settings"  ContentTemplate="{DataTemplate views:SettingsPage}" Route="SettingsPage" />
+    </TabBar>
+</Shell>

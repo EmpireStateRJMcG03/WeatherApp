@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherStation2.Views.PlannerPage"
+             x:Name="PlannerRoot"
+             Title="Planner">
+    <Grid RowDefinitions="Auto,*" Padding="20,20,20,0" RowSpacing="12"
+          MaximumWidthRequest="600" HorizontalOptions="Center">
+
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="Plan around the weather" FontSize="18" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="Add activity" Command="{Binding AddCommand}" />
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="No activities yet. Tap Add activity to plan something."
+                       HorizontalTextAlignment="Center" Margin="0,40" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0,6" Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold"
+                                       TextDecorations="{Binding TitleDecorations}" />
+                                <Label Grid.Column="1" Text="{Binding DateText}" FontSize="13" VerticalOptions="Center" />
+                            </Grid>
+                            <Label Text="{Binding LocationName}" FontSize="12" />
+
+                            <HorizontalStackLayout Spacing="8">
+                                <Image Source="{Binding Icon}" WidthRequest="28" HeightRequest="28" />
+                                <Label Text="{Binding ForecastText}" FontSize="13" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <Label Text="{Binding AdviceText}" TextColor="{Binding AdviceColor}"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding Notes}" IsVisible="{Binding HasNotes}" FontSize="13" />
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Text="{Binding DoneText}"
+                                        Command="{Binding BindingContext.ToggleDoneCommand, Source={x:Reference PlannerRoot}}"
+                                        CommandParameter="{Binding .}" />
+                                <Button Grid.Column="1" Text="Edit"
+                                        Command="{Binding BindingContext.EditCommand, Source={x:Reference PlannerRoot}}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

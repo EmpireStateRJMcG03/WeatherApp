@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherStation2.Views.ComparePage"
+             Title="Compare">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16" MaximumWidthRequest="600" HorizontalOptions="Center">
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Picker Title="First place" ItemsSource="{Binding Names}" SelectedItem="{Binding LeftName}" />
+                <Picker Grid.Column="1" Title="Second place" ItemsSource="{Binding Names}"
+                        SelectedItem="{Binding RightName}" />
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Label Text="{Binding Message}" IsVisible="{Binding HasMessage}"
+                   TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Border Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="{Binding Left.Name}" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Image Source="{Binding Left.Icon}" WidthRequest="64" HeightRequest="64" />
+                        <Label Text="{Binding Left.Temp}" FontSize="40" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Left.Condition}" FontSize="13" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Left.HighLow, StringFormat='High / low: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Left.Rain, StringFormat='Rain today: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Left.Wind, StringFormat='Wind: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Left.Humidity, StringFormat='Humidity: {0}'}" FontSize="13" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1" Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                    <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                        <Label Text="{Binding Right.Name}" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <Image Source="{Binding Right.Icon}" WidthRequest="64" HeightRequest="64" />
+                        <Label Text="{Binding Right.Temp}" FontSize="40" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Right.Condition}" FontSize="13" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Right.HighLow, StringFormat='High / low: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Right.Rain, StringFormat='Rain today: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Right.Wind, StringFormat='Wind: {0}'}" FontSize="13" />
+                        <Label Text="{Binding Right.Humidity, StringFormat='Humidity: {0}'}" FontSize="13" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Label Text="{Binding Summary}" FontSize="15" />
+
+            <Label Text="Weather data by Open-Meteo.com" FontSize="12"
+                   TextDecorations="Underline" HorizontalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnCreditTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

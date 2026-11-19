@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherStation2.Views.HomePage"
+             Title="Locations">
+    <Grid RowDefinitions="Auto,*" MaximumWidthRequest="600" HorizontalOptions="Center">
+
+        <Grid ColumnDefinitions="*,Auto" Padding="0,0,12,0">
+            <SearchBar x:Name="Search" Placeholder="Search any city in the world"
+                       SearchButtonPressed="OnSearch" />
+            <Border Grid.Column="1" WidthRequest="40" HeightRequest="40"
+                    StrokeShape="Ellipse" StrokeThickness="0" VerticalOptions="Center">
+                <Image Source="{Binding AvatarSource}" Aspect="AspectFill" />
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnAvatarTapped" />
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Groups}" IsGrouped="True"
+                        SelectionMode="Single" SelectionChanged="OnSelected">
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold"
+                           Padding="20,16,20,4" />
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto" Padding="20,10">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Name}" FontSize="18" />
+                            <Label Text="{Binding Subtitle}" FontSize="12" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1" Text="{Binding Star}" FontSize="20" VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

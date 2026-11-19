@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherStation2.Views.ForecastPage"
+             Title="Forecast">
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout x:Name="Root" Padding="20" Spacing="16"
+                                 MaximumWidthRequest="600" HorizontalOptions="Center">
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding Title}" FontSize="26" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Button x:Name="StarButton" Grid.Column="1" Text="{Binding StarText}" FontSize="22"
+                            Command="{Binding ToggleFavouriteCommand}" Clicked="OnStarClicked"
+                            BackgroundColor="Transparent" TextColor="{AppThemeBinding Light=#F5A300, Dark=#FFC83D}" />
+                </Grid>
+
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="Change location" Clicked="OnChangeLocation" />
+                    <Button Text="Refresh" Command="{Binding RefreshCommand}" />
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding Message}" IsVisible="{Binding HasMessage}"
+                       TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
+
+                <HorizontalStackLayout Spacing="16">
+                    <Image Source="{Binding Icon}" WidthRequest="88" HeightRequest="88" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="{Binding Temp}" FontSize="56" />
+                        <Label Text="{Binding Condition}" FontSize="18" />
+                        <Label Text="{Binding FeelsLike}" FontSize="13" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Border Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                        <VerticalStackLayout>
+                            <Label Text="Wind" FontSize="12" />
+                            <Label Text="{Binding Wind}" FontSize="16" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                        <VerticalStackLayout>
+                            <Label Text="Humidity" FontSize="12" />
+                            <Label Text="{Binding Humidity}" FontSize="16" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                        <VerticalStackLayout>
+                            <Label Text="Rain today" FontSize="12" />
+                            <Label Text="{Binding RainToday}" FontSize="16" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <Label Text="Next 7 days" FontSize="16" FontAttributes="Bold" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Days}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="50,36,*,Auto,Auto" ColumnSpacing="6" Padding="0,8">
+                                <Label Text="{Binding Day}" VerticalOptions="Center" />
+                                <Image Grid.Column="1" Source="{Binding Icon}"
+                                       WidthRequest="28" HeightRequest="28" />
+                                <Label Grid.Column="2" Text="{Binding Rain}" FontSize="12" VerticalOptions="Center" />
+                                <Label Grid.Column="3" Text="{Binding Wind}" FontSize="12" VerticalOptions="Center" />
+                                <Label Grid.Column="4" Text="{Binding HighLow}" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding Updated}" FontSize="12" HorizontalOptions="Center" />
+                <Label Text="Weather data by Open-Meteo.com" FontSize="12"
+                       TextDecorations="Underline" HorizontalOptions="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCreditTapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>
