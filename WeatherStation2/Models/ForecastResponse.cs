@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
-using WeatherStation1.Helpers;
+using WeatherStation2.Helpers;
 
-namespace WeatherStation1.Models;
+namespace WeatherStation2.Models;
 
 public class ForecastResponse
 {

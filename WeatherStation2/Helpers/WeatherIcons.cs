@@ -1,4 +1,4 @@
-﻿namespace WeatherStation1.Helpers;
+﻿namespace WeatherStation2.Helpers;
 
 public static class WeatherIcons
 {

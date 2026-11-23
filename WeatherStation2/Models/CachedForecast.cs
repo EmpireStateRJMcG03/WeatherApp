@@ -1,4 +1,4 @@
-﻿namespace WeatherStation1.Models;
+﻿namespace WeatherStation2.Models;
 
 // A forecast plus the moment it was downloaded (the brief requires storing the retrieval time).
 public class CachedForecast
