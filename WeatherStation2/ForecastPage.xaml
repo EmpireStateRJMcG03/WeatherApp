@@ -1,30 +1,50 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?x<?xml version="1.0" encoding="utf-8" ?>
+<!-- ForecastPage: the Forecast tab. It shows the current weather for one location,
+     three small info cards (wind, humidity, rain) and a list for the next 7 days.
+     It binds to ForecastViewModel (the BindingContext is set in the code-behind file). -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherStation2.Views.ForecastPage"
              Title="Forecast">
+    <!-- RefreshView adds pull down to refresh. While IsRefreshing is true it shows a spinner.
+         IsRefreshing is bound to IsBusy in the view model, and pulling down runs RefreshCommand. -->
     <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}">
+        <!-- ScrollView so everything can be reached on small screens. -->
         <ScrollView>
+            <!-- Main column. x:Name lets the code-behind fade the whole page in (see OnAppearing).
+                 MaximumWidthRequest 600 limits the width on desktop and HorizontalOptions Center puts it in the middle.
+                 On a phone it fills the screen. -->
             <VerticalStackLayout x:Name="Root" Padding="20" Spacing="16"
                                  MaximumWidthRequest="600" HorizontalOptions="Center">
 
+                <!-- Header row: the location name takes the spare width (star) and the favourite button takes only the width it needs (Auto). -->
                 <Grid ColumnDefinitions="*,Auto">
+                    <!-- The location name, taken from Title in the view model. -->
                     <Label Text="{Binding Title}" FontSize="26" FontAttributes="Bold" VerticalOptions="Center" />
+                    <!-- Favourite star button, in column 1 (right). Text shows a filled or empty star from StarText.
+                         Command runs ToggleFavouriteCommand in the view model. Clicked also runs OnStarClicked in the code-behind for the pop animation.
+                         The background is transparent so only the star shows. AppThemeBinding picks one gold colour for light mode and another for dark mode. -->
                     <Button x:Name="StarButton" Grid.Column="1" Text="{Binding StarText}" FontSize="22"
                             Command="{Binding ToggleFavouriteCommand}" Clicked="OnStarClicked"
                             BackgroundColor="Transparent" TextColor="{AppThemeBinding Light=#F5A300, Dark=#FFC83D}" />
                 </Grid>
 
+                <!-- Two buttons side by side. "Change location" calls OnChangeLocation in the code-behind.
+                     "Refresh" uses a Command, so it runs RefreshCommand in the view model. -->
                 <HorizontalStackLayout Spacing="8">
                     <Button Text="Change location" Clicked="OnChangeLocation" />
                     <Button Text="Refresh" Command="{Binding RefreshCommand}" />
                 </HorizontalStackLayout>
 
+                <!-- Error or info message. Only visible when HasMessage is true. The text colour is red in light mode and a lighter pink in dark mode. -->
                 <Label Text="{Binding Message}" IsVisible="{Binding HasMessage}"
                        TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
 
+                <!-- Current weather: icon on the left, temperature and details on the right. -->
                 <HorizontalStackLayout Spacing="16">
+                    <!-- Weather icon, fixed at 88 by 88. -->
                     <Image Source="{Binding Icon}" WidthRequest="88" HeightRequest="88" />
+                    <!-- Temperature (big text), condition and feels like text, stacked and centred up and down next to the icon. -->
                     <VerticalStackLayout VerticalOptions="Center">
                         <Label Text="{Binding Temp}" FontSize="56" />
                         <Label Text="{Binding Condition}" FontSize="18" />
@@ -32,19 +52,24 @@
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
 
+                <!-- Three info cards in a row. Three star columns give three equal widths, with a 10 unit gap. -->
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <!-- Wind card. It has no Grid.Column so it goes in column 0. A Border draws a rounded outline:
+                         StrokeShape RoundRectangle 12 gives rounded corners, and Stroke is the outline colour (different in light and dark mode). -->
                     <Border Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
                         <VerticalStackLayout>
                             <Label Text="Wind" FontSize="12" />
                             <Label Text="{Binding Wind}" FontSize="16" />
                         </VerticalStackLayout>
                     </Border>
+                    <!-- Humidity card, in column 1 (the middle). -->
                     <Border Grid.Column="1" Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
                         <VerticalStackLayout>
                             <Label Text="Humidity" FontSize="12" />
                             <Label Text="{Binding Humidity}" FontSize="16" />
                         </VerticalStackLayout>
                     </Border>
+                    <!-- Rain today card, in column 2 (the right). -->
                     <Border Grid.Column="2" Padding="12" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
                         <VerticalStackLayout>
                             <Label Text="Rain today" FontSize="12" />
@@ -53,10 +78,16 @@
                     </Border>
                 </Grid>
 
+                <!-- Heading for the daily forecast list. -->
                 <Label Text="Next 7 days" FontSize="16" FontAttributes="Bold" />
+                <!-- The 7 day list. BindableLayout turns a normal layout into a list: it repeats the template below once for every item in Days.
+                     It is used instead of a CollectionView because the list is short and sits inside a ScrollView already. -->
                 <VerticalStackLayout BindableLayout.ItemsSource="{Binding Days}">
+                    <!-- The pattern for one day. Inside the DataTemplate, bindings read properties of one day object. -->
                     <BindableLayout.ItemTemplate>
                         <DataTemplate>
+                            <!-- One day row with five columns: day name (50 wide), icon (36 wide), rain (takes spare space),
+                                 wind (as wide as its text) and high/low temperatures (as wide as its text). Numbers are fixed sizes. -->
                             <Grid ColumnDefinitions="50,36,*,Auto,Auto" ColumnSpacing="6" Padding="0,8">
                                 <Label Text="{Binding Day}" VerticalOptions="Center" />
                                 <Image Grid.Column="1" Source="{Binding Icon}"
@@ -69,10 +100,13 @@
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
+                <!-- Text saying when the data was last updated. -->
                 <Label Text="{Binding Updated}" FontSize="12" HorizontalOptions="Center" />
+                <!-- Credit link. The weather data comes from Open-Meteo, so the app credits it. The underline makes it look like a link. -->
                 <Label Text="Weather data by Open-Meteo.com" FontSize="12"
                        TextDecorations="Underline" HorizontalOptions="Center">
                     <Label.GestureRecognizers>
+                        <!-- Calls OnCreditTapped (in ForecastPage.xaml.cs) when the label is tapped or clicked. -->
                         <TapGestureRecognizer Tapped="OnCreditTapped" />
                     </Label.GestureRecognizers>
                 </Label>

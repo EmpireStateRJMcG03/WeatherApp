@@ -1,37 +1,63 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- HomePage: the Locations tab. It has a search bar and an avatar picture at the top.
+     Below them is a list of saved locations, split into groups (for example favourites).
+     It binds to HomeViewModel (the BindingContext is set in the code-behind file). -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherStation2.Views.HomePage"
              Title="Locations">
+    <!-- Page layout: a Grid with two rows. Auto makes the first row only as tall as its content (the search area).
+         The star row means the second row takes all the space that is left (the list).
+         MaximumWidthRequest 600 stops it getting wider than 600 on desktop. HorizontalOptions Center puts it in the middle.
+         On a phone it simply fills the screen. -->
     <Grid RowDefinitions="Auto,*" MaximumWidthRequest="600" HorizontalOptions="Center">
 
+        <!-- Top row, row 0: search bar on the left, avatar on the right.
+             The first column (star) takes the spare width. Auto makes the second column only as wide as the avatar.
+             Padding on the right (the 4 numbers are left, top, right, bottom) leaves a gap at the screen edge. -->
         <Grid ColumnDefinitions="*,Auto" Padding="0,0,12,0">
+            <!-- Search box. SearchButtonPressed calls OnSearch (in HomePage.xaml.cs) only when the user presses search or Enter.
+                 x:Name gives it a name so the code-behind can read Search.Text. -->
             <SearchBar x:Name="Search" Placeholder="Search any city in the world"
                        SearchButtonPressed="OnSearch" />
+            <!-- Round avatar. It sits in column 1 (the right). A Border with StrokeShape Ellipse and equal width and height draws a circle.
+                 StrokeThickness 0 means no outline. VerticalOptions Center lines it up with the search bar. -->
             <Border Grid.Column="1" WidthRequest="40" HeightRequest="40"
                     StrokeShape="Ellipse" StrokeThickness="0" VerticalOptions="Center">
+                <!-- The picture comes from AvatarSource in the view model. Aspect AspectFill scales it to fill the circle and crops any extra. -->
                 <Image Source="{Binding AvatarSource}" Aspect="AspectFill" />
+                <!-- Makes the avatar tappable. A Border has no Clicked event, so a TapGestureRecognizer is used.
+                     Tapped calls OnAvatarTapped in the code-behind, which opens the Settings tab. -->
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnAvatarTapped" />
                 </Border.GestureRecognizers>
             </Border>
         </Grid>
 
+        <!-- The list of locations. Grid.Row 1 puts it in the second (star) row.
+             ItemsSource is the list it shows (Groups in the view model). IsGrouped True means Groups is a list of groups, each with its own items.
+             SelectionMode Single lets one row be selected at a time. SelectionChanged calls OnSelected when a row is tapped. -->
         <CollectionView Grid.Row="1" ItemsSource="{Binding Groups}" IsGrouped="True"
                         SelectionMode="Single" SelectionChanged="OnSelected">
+            <!-- How each group heading looks (for example a title above the group). A DataTemplate is a pattern that is repeated once per group.
+                 Inside it, Binding Name reads the Name of that group. -->
             <CollectionView.GroupHeaderTemplate>
                 <DataTemplate>
                     <Label Text="{Binding Name}" FontSize="14" FontAttributes="Bold"
                            Padding="20,16,20,4" />
                 </DataTemplate>
             </CollectionView.GroupHeaderTemplate>
+            <!-- How each location row looks. This DataTemplate is repeated once for every item in a group.
+                 Inside it, bindings read properties of one LocationRow object. -->
             <CollectionView.ItemTemplate>
                 <DataTemplate>
+                    <!-- One row: the text takes the spare width on the left and the star takes only the width it needs on the right. -->
                     <Grid ColumnDefinitions="*,Auto" Padding="20,10">
                         <VerticalStackLayout>
                             <Label Text="{Binding Name}" FontSize="18" />
                             <Label Text="{Binding Subtitle}" FontSize="12" />
                         </VerticalStackLayout>
+                        <!-- Star mark, shown for favourite locations. In column 1 (right side). It is empty for places that are not favourites. -->
                         <Label Grid.Column="1" Text="{Binding Star}" FontSize="20" VerticalOptions="Center" />
                     </Grid>
                 </DataTemplate>
