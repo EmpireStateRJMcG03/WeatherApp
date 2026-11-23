@@ -1,46 +1,74 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- PlannerPage: the Planner tab. It lists the activities the user has planned,
+     each with the forecast for its day and a short piece of advice.
+     It binds to PlannerViewModel (the BindingContext is set in the code-behind file).
+     x:Name PlannerRoot gives the page a name so list items can reach the page view model (see the buttons below). -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherStation2.Views.PlannerPage"
              x:Name="PlannerRoot"
              Title="Planner">
+    <!-- Page layout: two rows. Auto is as tall as the header. The star row takes all the space left for the list.
+         The 20,20,20,0 padding is left, top, right, bottom. RowSpacing is the gap between rows.
+         MaximumWidthRequest 600 limits the width on desktop, and HorizontalOptions Center centres it. On a phone it fills the screen. -->
     <Grid RowDefinitions="Auto,*" Padding="20,20,20,0" RowSpacing="12"
           MaximumWidthRequest="600" HorizontalOptions="Center">
 
+        <!-- Header row 0: the text takes the spare width and the button takes only what it needs. -->
         <Grid ColumnDefinitions="*,Auto">
+            <!-- Page heading. -->
             <Label Text="Plan around the weather" FontSize="18" VerticalOptions="Center" />
+            <!-- Opens the activity edit page. Command is bound to AddCommand in the view model. -->
             <Button Grid.Column="1" Text="Add activity" Command="{Binding AddCommand}" />
         </Grid>
 
+        <!-- The list of activities, in row 1. ItemsSource is the Items list in the view model.
+             SelectionMode None because rows are not selectable. The buttons inside each row do the work. -->
         <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None">
+            <!-- Shown instead of the list when Items is empty. -->
             <CollectionView.EmptyView>
                 <Label Text="No activities yet. Tap Add activity to plan something."
                        HorizontalTextAlignment="Center" Margin="0,40" />
             </CollectionView.EmptyView>
+            <!-- How one activity looks. This DataTemplate is repeated for every item. Bindings inside read properties of one ActivityRow. -->
             <CollectionView.ItemTemplate>
                 <DataTemplate>
+                    <!-- A card for one activity. Margin is the space outside the card, Padding the space inside.
+                         StrokeShape gives rounded corners and Stroke is the outline colour (different in light and dark mode). -->
                     <Border Margin="0,6" Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
                         <VerticalStackLayout Spacing="6">
+                            <!-- Title on the left, date on the right. -->
                             <Grid ColumnDefinitions="*,Auto">
+                                <!-- TitleDecorations is bound too: done activities get a strikethrough line, other activities none. -->
                                 <Label Text="{Binding Title}" FontSize="18" FontAttributes="Bold"
                                        TextDecorations="{Binding TitleDecorations}" />
                                 <Label Grid.Column="1" Text="{Binding DateText}" FontSize="13" VerticalOptions="Center" />
                             </Grid>
+                            <!-- Name of the place the activity is planned for. -->
                             <Label Text="{Binding LocationName}" FontSize="12" />
 
+                            <!-- Forecast for the activity day: icon and short text side by side. -->
                             <HorizontalStackLayout Spacing="8">
                                 <Image Source="{Binding Icon}" WidthRequest="28" HeightRequest="28" />
                                 <Label Text="{Binding ForecastText}" FontSize="13" VerticalOptions="Center" />
                             </HorizontalStackLayout>
 
+                            <!-- Advice such as whether the weather suits the activity. The text colour comes from AdviceColor in the view model, so it can change for each row. -->
                             <Label Text="{Binding AdviceText}" TextColor="{Binding AdviceColor}"
                                    FontAttributes="Bold" />
+                            <!-- The notes the user typed. Hidden when there are none (HasNotes is false). -->
                             <Label Text="{Binding Notes}" IsVisible="{Binding HasNotes}" FontSize="13" />
 
+                            <!-- Two equal width buttons per card. -->
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <!-- Mark done or not done. The text comes from the row (DoneText).
+                                     Inside a DataTemplate the BindingContext is the row, but the commands live in the page view model.
+                                     So the Command binding goes through Source={x:Reference PlannerRoot} to the page, then reads BindingContext.ToggleDoneCommand.
+                                     CommandParameter="{Binding .}" passes the current row to the command so it knows which activity to change. -->
                                 <Button Text="{Binding DoneText}"
                                         Command="{Binding BindingContext.ToggleDoneCommand, Source={x:Reference PlannerRoot}}"
                                         CommandParameter="{Binding .}" />
+                                <!-- Edit this activity. Works the same way, using EditCommand and passing the row. -->
                                 <Button Grid.Column="1" Text="Edit"
                                         Command="{Binding BindingContext.EditCommand, Source={x:Reference PlannerRoot}}"
                                         CommandParameter="{Binding .}" />

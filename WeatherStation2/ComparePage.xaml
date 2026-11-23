@@ -1,29 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+  ComparePage: shows the weather for two chosen places side by side, with a short summary underneath.
+  It binds to CompareViewModel (the BindingContext is set in the code-behind file).
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WeatherStation2.Views.ComparePage"
              Title="Compare">
+    <!-- ScrollView so everything can be reached on small screens. -->
     <ScrollView>
+        <!-- Main column. MaximumWidthRequest keeps it at most 600 wide on desktop and
+             HorizontalOptions="Center" puts it in the middle. On a phone it fills the screen. -->
         <VerticalStackLayout Padding="20" Spacing="16" MaximumWidthRequest="600" HorizontalOptions="Center">
 
+            <!-- Place choosers. A Grid with two columns of "*" gives two equal halves, with a 12 unit gap.
+                 The first Picker has no Grid.Column so it goes in column 0 (the left).
+                 The second uses Grid.Column="1" so it goes on the right. -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <!-- Title is the text shown while nothing is picked. Names is the list of places and
+                     LeftName holds the chosen one. -->
                 <Picker Title="First place" ItemsSource="{Binding Names}" SelectedItem="{Binding LeftName}" />
                 <Picker Grid.Column="1" Title="Second place" ItemsSource="{Binding Names}"
                         SelectedItem="{Binding RightName}" />
             </Grid>
 
+            <!-- Spinner shown while data is loading. IsBusy is true during loading.
+                 It is used for both IsRunning (spinning) and IsVisible (shown or hidden). -->
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
 
+            <!-- Error or info message. It is only visible when HasMessage is true.
+                 AppThemeBinding picks a colour for light mode and another for dark mode,
+                 so the text stays readable in both. -->
             <Label Text="{Binding Message}" IsVisible="{Binding HasMessage}"
                    TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
 
+            <!-- Two weather cards side by side, again two equal columns. -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <!-- Left card. A Border draws a rounded outline around its content.
+                     StrokeShape gives rounded corners (radius 12), Stroke is the outline colour
+                     (different in light and dark theme) and StrokeThickness is its width. -->
                 <Border Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
+                    <!-- Stacks the details top to bottom. Binding paths like Left.Name read the Name
+                         property of the Left object in the view model.
+                         Centre alignment keeps the card tidy when the column is wide. -->
                     <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
                         <Label Text="{Binding Left.Name}" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                        <!-- Weather icon, fixed at 64 by 64 so both cards line up. -->
                         <Image Source="{Binding Left.Icon}" WidthRequest="64" HeightRequest="64" />
+                        <!-- Big temperature reading. -->
                         <Label Text="{Binding Left.Temp}" FontSize="40" HorizontalTextAlignment="Center" />
                         <Label Text="{Binding Left.Condition}" FontSize="13" HorizontalTextAlignment="Center" />
+                        <!-- StringFormat adds fixed text around the bound value. {0} is where the value goes. -->
                         <Label Text="{Binding Left.HighLow, StringFormat='High / low: {0}'}" FontSize="13" />
                         <Label Text="{Binding Left.Rain, StringFormat='Rain today: {0}'}" FontSize="13" />
                         <Label Text="{Binding Left.Wind, StringFormat='Wind: {0}'}" FontSize="13" />
@@ -31,6 +58,7 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- Right card. Same layout as the left one but it sits in column 1 and reads from Right. -->
                 <Border Grid.Column="1" Padding="14" StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D5DD, Dark=#475467}" StrokeThickness="1">
                     <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
                         <Label Text="{Binding Right.Name}" FontSize="18" FontAttributes="Bold" HorizontalTextAlignment="Center" />
@@ -45,11 +73,15 @@
                 </Border>
             </Grid>
 
+            <!-- Short written comparison of the two places, made by the view model. -->
             <Label Text="{Binding Summary}" FontSize="15" />
 
+            <!-- Credit link. The data comes from Open-Meteo, so the app credits it.
+                 The underline makes it look like a link. The tap handler is in the code-behind. -->
             <Label Text="Weather data by Open-Meteo.com" FontSize="12"
                    TextDecorations="Underline" HorizontalOptions="Center">
                 <Label.GestureRecognizers>
+                    <!-- Calls OnCreditTapped (in ComparePage.xaml.cs) when the label is tapped or clicked. -->
                     <TapGestureRecognizer Tapped="OnCreditTapped" />
                 </Label.GestureRecognizers>
             </Label>

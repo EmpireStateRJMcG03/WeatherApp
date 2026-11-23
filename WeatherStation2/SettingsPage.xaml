@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- SettingsPage: the Settings tab. The user can choose a picture, a theme, units and a default location.
+     It also has an About section with the data credit.
+     It binds to SettingsViewModel (the BindingContext is set in the code-behind file). -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="WeatherStation2.SettingsPage"
-             Title="SettingsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="WeatherStation2.Views.SettingsPage"
+             Title="Settings">
+    <!-- ScrollView so everything can be reached on small screens. -->
+    <ScrollView>
+        <!-- Main column. MaximumWidthRequest 600 limits the width on desktop and HorizontalOptions Center puts it in the middle. On a phone it fills the screen. -->
+        <VerticalStackLayout Padding="20" Spacing="12" MaximumWidthRequest="600" HorizontalOptions="Center">
+
+            <!-- Profile picture section. -->
+            <Label Text="Your picture" FontAttributes="Bold" />
+            <!-- Picture on the left, buttons on the right. -->
+            <HorizontalStackLayout Spacing="16">
+                <!-- Round picture. StrokeShape Ellipse with equal width and height makes a circle. StrokeThickness 0 means no outline. -->
+                <Border WidthRequest="72" HeightRequest="72" StrokeShape="Ellipse" StrokeThickness="0">
+                    <!-- The picture comes from AvatarSource. AspectFill scales it to fill the circle and crops any extra. -->
+                    <Image Source="{Binding AvatarSource}" Aspect="AspectFill" />
+                </Border>
+                <!-- Two buttons stacked, centred up and down next to the picture. -->
+                <VerticalStackLayout Spacing="8" VerticalOptions="Center">
+                    <!-- Runs ChooseImageCommand in the view model to pick a picture. -->
+                    <Button Text="Choose image" Command="{Binding ChooseImageCommand}" />
+                    <!-- Runs RemoveImageCommand. IsVisible is bound to HasCustomImage, so it only shows when a custom picture is set. -->
+                    <Button Text="Remove image" Command="{Binding RemoveImageCommand}"
+                            IsVisible="{Binding HasCustomImage}" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            <!-- Error or info message. Only visible when HasMessage is true. The colour is red in light mode and lighter pink in dark mode (AppThemeBinding). -->
+            <Label Text="{Binding Message}" IsVisible="{Binding HasMessage}"
+                   TextColor="{AppThemeBinding Light=#B3261E, Dark=#F2B8B5}" />
+
+            <!-- Theme setting. Each Picker is a drop down list. ItemsSource is the list of choices and SelectedItem is two way bound,
+                 so picking a value updates the view model and the view model value is shown here. Margin 0,12,0,0 adds 12 units of space above. -->
+            <Label Text="Theme" Margin="0,12,0,0" />
+            <!-- Choices such as light or dark. Stored in Theme. -->
+            <Picker ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}" />
+
+            <!-- Temperature unit setting. -->
+            <Label Text="Temperature units" />
+            <!-- Choices come from TemperatureUnits. The pick is stored in TemperatureUnit. -->
+            <Picker ItemsSource="{Binding TemperatureUnits}" SelectedItem="{Binding TemperatureUnit}" />
+
+            <!-- Wind speed unit setting. -->
+            <Label Text="Wind speed units" />
+            <!-- Choices come from WindUnits. The pick is stored in WindUnit. -->
+            <Picker ItemsSource="{Binding WindUnits}" SelectedItem="{Binding WindUnit}" />
+
+            <!-- Default location setting. -->
+            <Label Text="Default location" />
+            <!-- Choices come from LocationNames. The pick is stored in DefaultLocation. -->
+            <Picker ItemsSource="{Binding LocationNames}" SelectedItem="{Binding DefaultLocation}" />
+
+            <!-- About section. Margin adds 20 units of space above it. -->
+            <Label Text="About" FontAttributes="Bold" Margin="0,20,0,0" />
+            <!-- Credit link. The underline makes it look like a link. -->
+            <Label Text="Weather data by Open-Meteo.com" TextDecorations="Underline">
+                <Label.GestureRecognizers>
+                    <!-- Calls OnCreditTapped (in SettingsPage.xaml.cs) when the label is tapped or clicked. -->
+                    <TapGestureRecognizer Tapped="OnCreditTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <!-- Plain credit text for the icons. -->
+            <Label Text="Weather icons were drawn for this app." FontSize="12" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

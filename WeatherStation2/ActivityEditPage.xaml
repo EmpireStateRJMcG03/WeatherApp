@@ -1,12 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+  ActivityEditPage: a form for adding a new planned activity or editing an existing one.
+  It binds to ActivityEditViewModel (the BindingContext is set in the code-behind file).
+  A binding such as {Binding Title} links a control to a property on that view model,
+  so typing in the control updates the property and the other way round.
+-->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="WeatherStation2.ActivityEditPage"
-             Title="ActivityEditPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="WeatherStation2.Views.ActivityEditPage"
+             Title="{Binding PageTitle}">
+    <!-- ScrollView lets the form scroll when the screen is short or the keyboard is open. -->
+    <ScrollView>
+        <!-- One column of controls. Padding is the space inside the edges and Spacing is the gap between children.
+             MaximumWidthRequest stops the form stretching too wide on a desktop window, and
+             HorizontalOptions="Center" keeps the narrower column in the middle of the window.
+             On a phone the screen is narrower than 600, so it simply fills the width. -->
+        <VerticalStackLayout Padding="20" Spacing="12" MaximumWidthRequest="600" HorizontalOptions="Center">
+
+            <!-- Activity name: a one line text box. The placeholder is the grey hint shown while it is empty. -->
+            <Label Text="Activity" />
+            <Entry Text="{Binding Title}" Placeholder="e.g. Five-a-side, hill walk" />
+
+            <!-- Date chooser. It is bound to the Date property of the view model. -->
+            <Label Text="Date" />
+            <DatePicker Date="{Binding Date}" />
+
+            <!-- Drop-down list. ItemsSource is the list of choices (Names) and
+                 SelectedItem is the property that stores which one the user picked (LocationName). -->
+            <Label Text="Location" />
+            <Picker ItemsSource="{Binding Names}" SelectedItem="{Binding LocationName}" />
+
+            <!-- Editor is a multi line text box for longer notes. HeightRequest fixes it at 100 units tall. -->
+            <Label Text="Notes" />
+            <Editor Text="{Binding Notes}" HeightRequest="100" Placeholder="Optional notes" />
+
+            <!-- Buttons. Command binds each button to an ICommand in the view model, so the
+                 logic lives in the view model and not in this page. -->
+            <Button Text="Save" Command="{Binding SaveCommand}" />
+            <Button Text="Cancel" Command="{Binding CancelCommand}" />
+            <!-- The Delete button is only shown when IsEditing is true, which means an existing
+                 activity is open. It is hidden for a new activity because there is nothing to delete.
+                 It is red so it looks like a dangerous action. -->
+            <Button Text="Delete activity" Command="{Binding DeleteCommand}" IsVisible="{Binding IsEditing}"
+                    BackgroundColor="#C62828" TextColor="White" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
