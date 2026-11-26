@@ -1,8 +1,6 @@
 // HomePage code-behind: the C# half of the Locations page.
 // The layout is in HomePage.xaml. This page binds to HomeViewModel.
 // It also handles searching for a new city, tapping a saved location and tapping the avatar.
-using ObjCRuntime;
-using UIKit;
 using WeatherStation2.Models;
 using WeatherStation2.Services;
 using WeatherStation2.ViewModels;
